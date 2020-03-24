@@ -18,7 +18,7 @@ public class Main {
 
 
 
-        ServerSocket server = new ServerSocket(PORT);
+        ServerSocket server = new ServerSocket(Integer.parseInt(args[0]));
         PropertiesService propertiesService=new PropertiesService("config/config.props");
 
 
@@ -28,30 +28,23 @@ public class Main {
         op.init();
 
         TcpReceiverHandler receiverService;
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        UdpSender udpSender = new UdpSender(counterTasks, args[1]);
 
+        ScheduledFuture scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
+                udpSender,
+                2,
+                1,
+                TimeUnit.SECONDS);
+
+        scheduledFuture.cancel(false);
 
         while (true) {
-            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-            UdpSender udpSender = new UdpSender(counterTasks);
-
-            ScheduledFuture scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
-                    udpSender,
-                    2,
-                    1,
-                    TimeUnit.SECONDS);
-
-            scheduledFuture.cancel(false); //if it's correct?
 
             Socket socket = server.accept();
-            counterTasks.getAndIncrement();
-
-
             receiverService = new TcpReceiverHandler(op,socket);
 
             executorService.execute(receiverService);
-            counterTasks.decrementAndGet();
-
-
 
         }
 

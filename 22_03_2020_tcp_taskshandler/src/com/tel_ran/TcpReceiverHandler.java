@@ -21,9 +21,10 @@ public class TcpReceiverHandler implements Runnable {
 
     private Socket socket;
 
-    public TcpReceiverHandler(OperationsProvider operationsProvider, Socket socket) {
+    public TcpReceiverHandler(OperationsProvider operationsProvider, Socket socket, AtomicInteger countTasks ) {
         this.operationsProvider = operationsProvider;
         this.socket = socket;
+        this.countTasks=countTasks;
     }
 
     public TcpReceiverHandler() {
@@ -38,34 +39,30 @@ public class TcpReceiverHandler implements Runnable {
                     (socket.getInputStream()));
             PrintStream socketOutput=new PrintStream(socket.getOutputStream());
 
-            String line;
-            while (isAlive) {
-              //  countTasks.getAndIncrement();
-                if ((line = socketInput.readLine()) == null) {
-                    isAlive = false;
-                    return;
-                }
-                String[] parts = line.split(delimiter);
+            String line=socketInput.readLine();
 
-                if (parts.length != 2) {
-                    socketOutput.println(line + delimiter + INCORRECT_LINE);
+            countTasks.getAndIncrement();
+
+            String[] parts = line.split(delimiter);
+
+            if (parts.length != 2) {
+                socketOutput.println(line + delimiter + INCORRECT_LINE);
+            } else {
+                String text = parts[0];
+                String operationName = parts[1];
+                IOperation operation = operationsProvider.getByName(operationName);
+                if (operation == null) {
+                    socketOutput.println(line + " " + WRONG_OPERATION);
                 } else {
-                    String text = parts[0];
-                    String operationName = parts[1];
-                    IOperation operation = operationsProvider.getByName(operationName);
-                    if (operation == null) {
-                        socketOutput.println(line + " " + WRONG_OPERATION);
-                    } else {
-                        socketOutput.println( operation.operate(text));
+                    socketOutput.println( operation.operate(text));
 
-                    }
                 }
-               // countTasks.decrementAndGet();
-                socket.close();
-
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            countTasks.decrementAndGet();
+            socket.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
