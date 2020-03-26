@@ -16,9 +16,9 @@ public class TcpReceiverHandler implements Runnable {
     private static final String INCORRECT_LINE = "incorrect line";
     private String delimiter = "#";
 
-    private volatile static boolean isAlive = true;
-    private OperationsProvider operationsProvider;
 
+    private OperationsProvider operationsProvider;
+    private AtomicInteger countTasks;
     private Socket socket;
 
     public TcpReceiverHandler(OperationsProvider operationsProvider, Socket socket, AtomicInteger countTasks ) {
@@ -26,10 +26,6 @@ public class TcpReceiverHandler implements Runnable {
         this.socket = socket;
         this.countTasks=countTasks;
     }
-
-    public TcpReceiverHandler() {
-    }
-
 
 
     @Override
@@ -41,7 +37,6 @@ public class TcpReceiverHandler implements Runnable {
 
             String line=socketInput.readLine();
 
-            countTasks.getAndIncrement();
 
             String[] parts = line.split(delimiter);
 

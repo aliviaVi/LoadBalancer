@@ -8,8 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
-    static final int PORT=2001; // check outerServer Port ARINA
-    private static final int UDP_PORT = 3001; // check udpSendingPort Lena
+
     private static final String SERVER_HOST = "localhost";
     public static AtomicInteger counterTasks=new AtomicInteger(0);
 
@@ -28,6 +27,7 @@ public class Main {
         op.init();
 
         TcpReceiverHandler receiverService;
+
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
         UdpSender udpSender = new UdpSender(counterTasks, args[1]);
 
@@ -42,7 +42,8 @@ public class Main {
         while (true) {
 
             Socket socket = server.accept();
-            receiverService = new TcpReceiverHandler(op,socket);
+            counterTasks.getAndIncrement();
+            receiverService = new TcpReceiverHandler(op,socket, counterTasks);
 
             executorService.execute(receiverService);
 
