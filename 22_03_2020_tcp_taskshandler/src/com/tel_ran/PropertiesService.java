@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Properties;
 
 public class PropertiesService {
-    private String prorsPath;
+    private String propsPath;
     private Properties props;
 
-    public PropertiesService(String prorsPath) throws IOException {
-        this.prorsPath = prorsPath;
+    public PropertiesService(String propsPath) throws IOException {
+        this.propsPath = propsPath;
         props = new Properties();
         props.load(new FileReader("config/config.props"));
     }

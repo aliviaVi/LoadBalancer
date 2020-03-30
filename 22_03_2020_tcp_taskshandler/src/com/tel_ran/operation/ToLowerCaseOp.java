@@ -1,8 +1,8 @@
-package com.tel_ran.operations;
+package com.tel_ran.operation;
 
 import com.tel_ran.IOperation;
 
-public class ToLowerCase  implements IOperation {
+public class ToLowerCaseOp implements IOperation {
     private static final String NAME ="lowercase";
 
 

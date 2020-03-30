@@ -1,8 +1,9 @@
-package com.tel_ran.operations;
+package com.tel_ran.operation;
 
 import com.tel_ran.IOperation;
 
-public class ToUpperCase implements IOperation {
+
+public class ToUpperCaseOp implements IOperation {
 
     private static final String NAME="uppercase";
 

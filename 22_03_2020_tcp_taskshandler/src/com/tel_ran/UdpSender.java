@@ -8,29 +8,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class UdpSender implements Runnable {
 
-    AtomicInteger counterTasks;
-    String server_port;
+   private AtomicInteger counterTasks;
+    private String balancerHost;
     DatagramSocket socket = new DatagramSocket();
+    private int balancerUdpPort;
+    private int handlerTcpPort;
 
 
-    public UdpSender(AtomicInteger counterTasks , String server_port) throws SocketException {
-        this.counterTasks = counterTasks;
-        this.server_port=server_port;
+    public UdpSender(AtomicInteger counterTasks , String balancerHost, int balancerUdpPort, int handlerTcpPort) throws SocketException {
+
+
     }
 
 
 
     @Override
     public void run() {
-
+        try {
         String integerString = counterTasks.toString();
-        String res=integerString.concat("#").concat(server_port);
+        String res=integerString.concat("#").concat(String.valueOf(handlerTcpPort));
         byte[] dataOut = res.getBytes();
 
         DatagramPacket packetOut = new DatagramPacket(
                 dataOut,
-                dataOut.length);
-        try {
+                dataOut.length,
+                InetAddress.getByName(balancerHost),
+                balancerUdpPort);
+
             socket.send(packetOut);
         } catch (IOException e) {
             e.printStackTrace();

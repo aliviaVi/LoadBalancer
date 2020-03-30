@@ -1,4 +1,4 @@
-package com.tel_ran.operations;
+package com.tel_ran.operation;
 
 import com.tel_ran.IOperation;
 

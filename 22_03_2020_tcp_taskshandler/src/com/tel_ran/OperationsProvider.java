@@ -29,7 +29,7 @@ public class OperationsProvider {
                 IOperation iOperation = (IOperation) Class.forName(path).getConstructor().newInstance();
                 operationsByNameMap.put(iOperation.getName(), iOperation);
             } catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException e) {
-                throw new RuntimeException();
+                throw new RuntimeException(e);
             }
         }
     }
